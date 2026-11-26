@@ -1,0 +1,24 @@
+name: Publish verified PhotoStyle documents
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: photostyle-document-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify and publish original documents
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/workflows/publish_documents.py
+      - name: Keep publication report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: photostyle-publication-report
+          path: publication-report.json
