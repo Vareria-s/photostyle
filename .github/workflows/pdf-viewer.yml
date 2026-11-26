@@ -1,0 +1,54 @@
+name: Publish PhotoStyle PDF viewer
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/pdf-viewer.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: photostyle-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Prepare viewer and verified pilot PDFs
+        shell: python
+        run: |
+          import urllib.request, json, pathlib, zipfile, io, hashlib
+          root = pathlib.Path('site')
+          root.mkdir()
+          def get(url):
+              req = urllib.request.Request(url, headers={'User-Agent': 'PhotoStyle-PDF-viewer'})
+              with urllib.request.urlopen(req, timeout=180) as r:
+                  return r.read()
+          dist = get('https://github.com/mozilla/pdf.js/releases/download/v6.5.438/pdfjs-6.5.438-dist.zip')
+          with zipfile.ZipFile(io.BytesIO(dist)) as z:
+              z.extractall(root / 'pdfjs')
+          release = json.loads(get('https://api.github.com/repos/Vareria-s/photostyle/releases/tags/canon-g7x-mark-iii-v1'))
+          folder = root / 'pdfs' / release['tag_name']
+          folder.mkdir(parents=True)
+          expected = {'canon-powershot-g7x-mark-iii-manual-ru.pdf': '344f9b4df614b5d402ba73df26e9244b3d37201acba81e6a000671e3a93c8f89', 'canon-powershot-g7x-mark-iii-manual-en.pdf': 'e9a104e62771cd4aa5c5ae0d88b59b52ee1a3dd1bf3b29809172200c6b268290'}
+          manifest = []
+          for asset in release['assets']:
+              if asset['name'] not in expected:
+                  continue
+              data = get(asset['browser_download_url'])
+              assert data.startswith(b'%PDF-') and hashlib.sha256(data).hexdigest() == expected[asset['name']], 'PDF checksum mismatch'
+              (folder / asset['name']).write_bytes(data)
+              manifest.append({'file': asset['name'], 'bytes': len(data), 'sha256': expected[asset['name']]})
+          assert len(manifest) == 2
+          (root / 'manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+          (root / 'index.html').write_text('<!doctype html><html lang="ru"><meta charset="utf-8"><title>PhotoStyle — документы</title><h1>PhotoStyle — документы</h1><p>Оригинальные инструкции Canon. Просмотр PDF.js (Mozilla).</p><a href="https://github.com/Vareria-s/photostyle/releases">Документы и источники</a></html>', encoding='utf-8')
+          (root / '.nojekyll').touch()
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - name: Deploy viewer
+        id: deployment
+        uses: actions/deploy-pages@v4
