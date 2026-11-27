@@ -1,4 +1,5 @@
 import copy
+import io
 import importlib.util
 import pathlib
 import json
@@ -6,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('converter', ROOT / 'converter.py')
@@ -27,6 +29,87 @@ def source(offers=None):
 
 
 class ConverterTests(unittest.TestCase):
+    def test_missing_saved_variant_is_excluded_and_explicitly_retired(self):
+        cfg = config()
+        cfg.update(mode='production', seller={'Address':'Fixture','ContactPhone':'123','ManagerName':'Fixture'},
+                   migration_account_scope='fixture', migration={'p': {'Id':'legacy-p','AvitoId':'123'}},
+                   activation={k:True for k in ['seller_verified','categories_validated','migration_verified',
+                                                'avito_validator_passed','account_autoload_verified']},
+                   retirement={'confirmed':True,'reasons':['source_missing']}, guards={'minimum_ratio':0})
+        cfg['categories']['cat']['validated'] = True
+        previous = c.sync(cfg, source([('b','p','12','В наличии'),('q','q','15','В наличии')]))['state']
+        saved = copy.deepcopy(previous)
+        changed = source([('a','p','10','В наличии'),('q','q','15','В наличии')])
+        result = c.sync(cfg, changed, previous)
+        self.assertEqual(result['report']['candidate_count'], 1)
+        self.assertEqual(result['report']['reason_counts']['selected_variant_missing'], 1)
+        self.assertEqual(result['report']['retirement_count'], 1)
+        ads = c.ET.fromstring(result['outputs']['feed.xml']).findall('Ad')
+        retired = next(ad for ad in ads if ad.findtext('Id') == 'legacy-p')
+        self.assertEqual(retired.findtext('AvitoId'), '123')
+        self.assertEqual(retired.findtext('Price'), '12')
+        self.assertIsNotNone(retired.find('DateEnd'))
+        self.assertEqual(result['state']['items']['p']['variant_id'], 'b')
+        self.assertFalse(result['state']['items']['p']['published'])
+        self.assertEqual(previous, saved)
+        preview = c.sync(dict(cfg, mode='preview'), changed, previous)
+        self.assertIn('<DateEnd>', preview['outputs']['preview.xml'])
+        self.assertTrue(preview['state']['items']['p']['published'])
+        with self.assertRaisesRegex(c.SyncError, 'candidate_count_drop_guard'):
+            c.sync(dict(cfg, guards={'minimum_ratio':0.7}), changed, previous)
+        switched = c.sync(dict(cfg, product_overrides={'p':{'variant_id':'a'}}), changed, previous)
+        self.assertEqual(switched['report']['retirement_count'], 0)
+        self.assertEqual(switched['state']['items']['p']['id'], 'legacy-p')
+        self.assertEqual(switched['state']['items']['p']['avito_id'], '123')
+        self.assertEqual(switched['state']['items']['p']['variant_id'], 'a')
+        limited = c.sync(dict(cfg, test_allowlist=['q']), changed, previous)
+        self.assertEqual(limited['report']['retirement_count'], 0)
+        self.assertNotIn('legacy-p', limited['outputs']['feed.xml'])
+
+    def test_saved_variant_survives_new_lower_sibling_and_explicit_override(self):
+        cfg = config()
+        previous = c.sync(cfg, source([('b','p','12','В наличии')]))['state']
+        changed = source([('a','p','10','В наличии'),('b','p','12','В наличии')])
+        result = c.sync(cfg, changed, previous)
+        self.assertEqual(result['state']['items']['p']['variant_id'], 'b')
+        self.assertIn('<Price>12</Price>', result['outputs']['preview.xml'])
+        override = dict(cfg, product_overrides={'p': {'variant_id':'a'}})
+        switched = c.sync(override, changed, previous)
+        self.assertEqual(switched['state']['items']['p']['variant_id'], 'a')
+        self.assertIn('<Price>10</Price>', switched['outputs']['preview.xml'])
+
+    def test_cli_publishes_only_a_complete_fresh_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            d = pathlib.Path(directory)
+            (d / 'config.json').write_text(json.dumps(config()), encoding='utf-8')
+            (d / 'source.yml').write_bytes(source())
+            out = d / 'out'
+            args = ['--config', str(d / 'config.json'), '--source-file', str(d / 'source.yml'),
+                    '--state', str(d / 'previous/state.json'), '--out', str(out)]
+            self.assertEqual(c.main(args), 0)
+            before = {p.name: p.read_bytes() for p in out.iterdir()}
+            with mock.patch.object(c.sys, 'stderr', new_callable=io.StringIO) as error:
+                self.assertEqual(c.main(args), 2)
+            self.assertIn('output_directory_must_be_fresh', error.getvalue())
+            self.assertEqual(before, {p.name: p.read_bytes() for p in out.iterdir()})
+            fresh = d / 'fresh'
+            args[-1] = str(fresh)
+            real_write = pathlib.Path.write_text
+            def fail_after_one_file(path, *a, **kw):
+                if path.name == 'state.json':
+                    raise OSError('injected write failure')
+                return real_write(path, *a, **kw)
+            with mock.patch.object(pathlib.Path, 'write_text', fail_after_one_file):
+                self.assertEqual(c.main(args), 2)
+            self.assertFalse(fresh.exists())
+            with mock.patch.object(c.os, 'replace', side_effect=OSError('injected rename failure')):
+                self.assertEqual(c.main(args), 2)
+            self.assertFalse(fresh.exists())
+            self.assertEqual(before, {p.name: p.read_bytes() for p in out.iterdir()})
+            self.assertFalse(list(d.glob('.snapshot-*')))
+            self.assertEqual(c.main(args), 0)
+            self.assertEqual(set(before), {p.name for p in fresh.iterdir()})
+
     def test_published_unavailable_products_are_explicitly_retired(self):
         cfg = config()
         cfg.update(mode='production', seller={'Address':'Fixture','ContactPhone':'123','ManagerName':'Fixture'},
@@ -137,8 +220,11 @@ class ConverterTests(unittest.TestCase):
             self.assertTrue((d / 'out/preview.xml').is_file())
             before = {p.name: p.read_bytes() for p in (d / 'out').iterdir()}
             (d / 'source.yml').write_bytes(b'<broken')
+            cmd[-1] = str(d / 'new-out')
             bad = subprocess.run(cmd, capture_output=True)
             self.assertEqual(bad.returncode, 2)
+            self.assertIn(b'invalid_XML', bad.stderr)
+            self.assertFalse((d / 'new-out').exists())
             self.assertEqual(before, {p.name: p.read_bytes() for p in (d / 'out').iterdir()})
 
     def test_report_distinguishes_draft_readiness_and_invalid_inventory(self):
