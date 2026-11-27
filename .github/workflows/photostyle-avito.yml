@@ -1,0 +1,50 @@
+name: PhotoStyle Avito hourly snapshot
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'avito-service/**'
+      - '.github/workflows/photostyle-avito.yml'
+permissions:
+  contents: write
+concurrency:
+  group: photostyle-avito-publication
+  cancel-in-progress: false
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Converter seam tests
+        run: python -m unittest discover -s avito-service/tests -v
+      - name: HTTP relay tests
+        run: node --test avito-service/tests/worker.test.mjs
+      - name: Atomic publication CLI test (local git only)
+        run: python avito-service/tools/check_publication.py
+      - name: Retrieve last-good state (404 branch absence only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python avito-service/tools/snapshot.py prepare --directory "$RUNNER_TEMP/avito-previous"
+      - name: Download real Tilda catalog and build fresh unpublished staging
+        run: >-
+          python avito-service/converter.py
+          --config avito-service/config.json
+          --source-url https://photostyle.ru/tstore/yml/a8b941bea8a7ee192c94ad5b5a0059eb.yml
+          --state "$RUNNER_TEMP/avito-previous/state.json"
+          --out "$RUNNER_TEMP/avito-staging"
+      - name: Publish complete snapshot and immutable pointer in one ref update
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python avito-service/tools/snapshot.py publish --directory "$RUNNER_TEMP/avito-previous" --stage "$RUNNER_TEMP/avito-staging"
