@@ -118,12 +118,18 @@ def sync(config, source_bytes, previous_state=None):
     allowlist = config.get('test_allowlist')
     for uid, variants in sorted(groups.items()):
         in_scope = allowlist is None or uid in allowlist
-        # Stable minimum variant UID, unless explicitly selected; never substitute on stock changes.
-        preferred = config.get('product_overrides', {}).get(uid, {}).get('variant_id')
+        # Keep the saved variant; only an explicit override can switch it.
+        override = config.get('product_overrides', {}).get(uid, {}).get('variant_id')
+        preferred = override or old_items.get(uid, {}).get('variant_id')
         chosen = next((o for o in variants if o.get('id') == preferred), None) if preferred else min(variants, key=lambda o: o.get('id'))
         if chosen is None:
-            if in_scope:
+            if override and in_scope:
                 blockers.add('configured_variant_missing:' + uid)
+            reason = 'configured_variant_missing' if override else 'selected_variant_missing'
+            reasons.append([uid, preferred, 'excluded', reason])
+            reasons.extend([uid, v.get('id'), 'excluded', 'variant_not_selected'] for v in variants)
+            if not override:
+                inactive[uid] = 'source_missing'
             continue
         selected[uid] = chosen
         for v in variants:
@@ -266,8 +272,10 @@ def sync(config, source_bytes, previous_state=None):
         for uid, old in old_items.items():
             if allowlist is not None and uid not in allowlist:
                 continue
-            cause = 'missing' if uid not in groups else inactive.get(uid)
-            if old.get('published') and cause in retirement.get('reasons', []):
+            cause = 'source_missing' if uid not in groups else inactive.get(uid)
+            policy_reasons = retirement.get('reasons', [])
+            permitted = cause in policy_reasons or (cause == 'source_missing' and uid not in groups and 'missing' in policy_reasons)
+            if old.get('published') and permitted:
                 ad = ET.fromstring(old['ad_xml'])
                 ET.SubElement(ad, 'DateEnd').text = (datetime.now(timezone.utc) - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
                 ads.append(ad)
@@ -338,9 +346,12 @@ def main(argv=None):
     sources.add_argument('--source-file')
     sources.add_argument('--source-url')
     parser.add_argument('--state', required=True, help='previous state input; new state is always OUT/state.json')
-    parser.add_argument('--out', required=True, help='unpublished snapshot staging directory')
+    parser.add_argument('--out', required=True, help='fresh, nonexistent output directory for a complete snapshot')
     args = parser.parse_args(argv)
     try:
+        out = Path(args.out)
+        if out.exists() or out.is_symlink():
+            raise SyncError('output_directory_must_be_fresh: ' + str(out))
         config = json.loads(Path(args.config).read_text(encoding='utf-8-sig'))
         state_path = Path(args.state)
         previous = json.loads(state_path.read_text(encoding='utf-8-sig')) if state_path.exists() else None
@@ -350,22 +361,19 @@ def main(argv=None):
         else:
             data = read_source_url(args.source_url)
         result = sync(config, data, previous)
-        out = Path(args.out)
-        out.mkdir(parents=True, exist_ok=True)
-        # Compute everything first. GitHub workflow publishes the complete directory in one git commit.
-        # Local file replacements are atomic individually; this directory must not be served directly.
+        out.parent.mkdir(parents=True, exist_ok=True)
+        # All bytes are written before one directory rename exposes the snapshot.
+        # Callers must give this run exclusive ownership of a nonexistent output path.
         with tempfile.TemporaryDirectory(prefix='.snapshot-', dir=out.parent) as temporary:
-            stage = Path(temporary)
+            stage = Path(temporary) / 'snapshot'
+            stage.mkdir()
             for filename, content in result['outputs'].items():
                 (stage / filename).write_text(content, encoding='utf-8', newline='')
-            for filename in result['outputs']:
-                os.replace(stage / filename, out / filename)
-            if 'feed.xml' not in result['outputs']:
-                (out / 'feed.xml').unlink(missing_ok=True)
+            os.replace(stage, out)
         print(json.dumps({k: v for k, v in result['report'].items() if k != 'category_counts'}, ensure_ascii=False))
         return 0
     except (ValueError, OSError, ET.ParseError) as error:
-        print('Conversion failed; previous snapshot unchanged: ' + str(error), file=sys.stderr)
+        print('Conversion failed; no new snapshot published: ' + str(error), file=sys.stderr)
         return 2
 
 

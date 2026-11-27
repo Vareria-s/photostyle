@@ -26,7 +26,7 @@
   "guards": {
     "minimum_ratio": 0.7
   },
-  "variant_policy": "minimum_offer_uid_per_group_id; stable; override variant_id explicitly",
+  "variant_policy": "saved_variant_id; otherwise minimum_offer_uid_per_group_id; explicit product_overrides[parent_uid].variant_id switches variant; missing saved variant excluded without substitution",
   "seller": {
     "Address": "Москва, улица Академика Королева, 13с1, подъезд 5",
     "ContactPhone": "+79398526416",
@@ -55,7 +55,7 @@
   "retirement": {
     "confirmed": false,
     "reasons": [
-      "missing",
+      "source_missing",
       "zero_stock",
       "source_unavailable",
       "inventory_unavailable"
