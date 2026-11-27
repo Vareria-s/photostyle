@@ -1,7 +1,7 @@
 name: PhotoStyle Avito hourly snapshot
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '37 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
