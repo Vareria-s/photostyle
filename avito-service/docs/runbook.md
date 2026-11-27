@@ -43,3 +43,10 @@ python avito-service/converter.py --config avito-service/config.json --source-ur
 ```
 
 Не создавать `$stagingPath` заранее и не указывать каталог last-good. После успеха агент проверяет все результаты нового snapshot и только затем передаёт этот каталог в `snapshot.py publish --directory path/to/avito-feed-checkout --stage $stagingPath`. Для восстановления прежнего расчёта нужен новый `--out`, а не перезапись старого каталога.
+
+
+## Проверенная особенность Cloudflare runtime
+
+В настройках Pages compatibility date проверена: `2026-11-27`. В live deployment исправлена причина немедленного `pointer_fetch_failed`: Cloudflare Workers не реализует `redirect: "error"` и выбрасывает исключение ещё до upstream запроса. Использовать `redirect: "manual"`; существующая проверка HTTP отклоняет 3xx и не следует по Location. [Документация Request Cloudflare](https://developers.cloudflare.com/workers/runtime-apis/request/). Не возвращать неподдерживаемый режим при обновлении relay. Обёртка `(...args) => globalThis.fetch(...args)` сохранена; она поддерживает receiver нативного вызова.
+
+После исправления root проверил live `/health`: HTTP 200, source_count=3626, candidate_count=2656, stale=false. Полную сетевую сверку preview и проверку feed=503/state=404 агент развёртывания фиксирует отдельно. Успех Actions и HTTP не равен официальной валидации Avito: категории, реквизиты, миграция прежних объявлений и финальная активация по-прежнему ожидают разрешённого доступа к аккаунту.
