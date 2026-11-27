@@ -1,6 +1,6 @@
 {
-  "total": 1120,
-  "published": 1120,
+  "total": 1129,
+  "published": 1129,
   "unavailable": 0,
   "files": [
     {
@@ -10090,11 +10090,92 @@
       "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-26-02/doc-fffb0d9877ab967b6b9086afb162ae36bc3c3b61c151afaccac25441d7f59a27.pdf",
       "status": "published",
       "source": "https://s3-ap-northeast-1.amazonaws.com/tamron-docs/consumer/support/download/inst/a068/a068_inst_2310_en.pdf"
+    },
+    {
+      "filename": "doc-3497c486e91b99fa90057430455d2db737cbcf2a326b5fc1e52af3cc23d5f5e6.pdf",
+      "sha256": "3497c486e91b99fa90057430455d2db737cbcf2a326b5fc1e52af3cc23d5f5e6",
+      "bytes": 631891,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-3497c486e91b99fa90057430455d2db737cbcf2a326b5fc1e52af3cc23d5f5e6.pdf",
+      "status": "published",
+      "source": "https://www.sony.com/electronics/support/res/manuals/5061/65a6f3136e67c80714353e5e88e6ce1a/50619870M.pdf"
+    },
+    {
+      "filename": "doc-a58ab028722480bca66998e35ba5815c56f66d4c9d649aea6e1e88fbe9a9a9cc.pdf",
+      "sha256": "a58ab028722480bca66998e35ba5815c56f66d4c9d649aea6e1e88fbe9a9a9cc",
+      "bytes": 7107937,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-a58ab028722480bca66998e35ba5815c56f66d4c9d649aea6e1e88fbe9a9a9cc.pdf",
+      "status": "published",
+      "source": "https://helpguide.sony.net/dsc/2610/v1/en/print.pdf"
+    },
+    {
+      "filename": "doc-f9f03ed9e22e0a785fd81b0c20c398fc190e42f9f31e69cf6a4659e4eba8783d.pdf",
+      "sha256": "f9f03ed9e22e0a785fd81b0c20c398fc190e42f9f31e69cf6a4659e4eba8783d",
+      "bytes": 754394,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-f9f03ed9e22e0a785fd81b0c20c398fc190e42f9f31e69cf6a4659e4eba8783d.pdf",
+      "status": "published",
+      "source": "https://gdlp01.c-wss.com/gds/9/0300053099/01/rf7-14f2835l-fe-stm-im-eng.pdf"
+    },
+    {
+      "filename": "doc-3316b6675338ad75b8c99d22f6d4347e13873c04a988610d3c9278d4618c1d50.pdf",
+      "sha256": "3316b6675338ad75b8c99d22f6d4347e13873c04a988610d3c9278d4618c1d50",
+      "bytes": 959977,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-3316b6675338ad75b8c99d22f6d4347e13873c04a988610d3c9278d4618c1d50.pdf",
+      "status": "published",
+      "source": "https://gdlp01.c-wss.com/gds/0/0300053110/02/rf14-f14-lvcm-im2-eng.pdf"
+    },
+    {
+      "filename": "doc-0d0903f6b6ab14fd58775c48b2c04b37334f38812814ddc21bcbed1a0643dd98.pdf",
+      "sha256": "0d0903f6b6ab14fd58775c48b2c04b37334f38812814ddc21bcbed1a0643dd98",
+      "bytes": 20870833,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-0d0903f6b6ab14fd58775c48b2c04b37334f38812814ddc21bcbed1a0643dd98.pdf",
+      "status": "published",
+      "source": "https://cam.start.canon/en/C023/manual/c023.pdf"
+    },
+    {
+      "filename": "doc-b450adac97668c9a201b44f574be4b56cd71a438ba63de8e9b521416802d7e57.pdf",
+      "sha256": "b450adac97668c9a201b44f574be4b56cd71a438ba63de8e9b521416802d7e57",
+      "bytes": 1025501,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-b450adac97668c9a201b44f574be4b56cd71a438ba63de8e9b521416802d7e57.pdf",
+      "status": "published",
+      "source": "https://www.sony.com/electronics/support/res/manuals/5069/76cc429f8e6fae7b00b1770b48104055/50695490M.pdf"
+    },
+    {
+      "filename": "doc-1636f487fafc922d32d4f81cebd45c037df94c9ba607bfa96d7434cde6856457.pdf",
+      "sha256": "1636f487fafc922d32d4f81cebd45c037df94c9ba607bfa96d7434cde6856457",
+      "bytes": 4109930,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-1636f487fafc922d32d4f81cebd45c037df94c9ba607bfa96d7434cde6856457.pdf",
+      "status": "published",
+      "source": "https://cdn.hasselblad.com/manuals/XCD_35-100E_QSG/QSG/XCD-35-100E-Lens-Quick-Start-Guide-Multi-Language.pdf"
+    },
+    {
+      "filename": "doc-4ecbec9abaa08707bcc0892347486ba264b05a86a5850fbb0adfc1a17206ce67.pdf",
+      "sha256": "4ecbec9abaa08707bcc0892347486ba264b05a86a5850fbb0adfc1a17206ce67",
+      "bytes": 1576356,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-4ecbec9abaa08707bcc0892347486ba264b05a86a5850fbb0adfc1a17206ce67.pdf",
+      "status": "published",
+      "source": "https://gopro.my.salesforce.com/sfc/p/o0000000HJuF/a/Uo000004q001/LID6R0jcLQQserTRxsyRsP2NzZPUfMVWpHCS_0ZbuxU"
+    },
+    {
+      "filename": "doc-fdfe0b32039c3ec1bab4aadb7bf6545789d3d1b58edce498d1c3939581f5a620.pdf",
+      "sha256": "fdfe0b32039c3ec1bab4aadb7bf6545789d3d1b58edce498d1c3939581f5a620",
+      "bytes": 19869765,
+      "release": "documents-2026-11-27-03",
+      "url": "https://github.com/Vareria-s/photostyle/releases/download/documents-2026-11-27-03/doc-fdfe0b32039c3ec1bab4aadb7bf6545789d3d1b58edce498d1c3939581f5a620.pdf",
+      "status": "published",
+      "source": "https://cam.start.canon/en/C026/manual/c026.pdf"
     }
   ],
-  "attached_products": 982,
-  "products_with_documents": 999,
+  "attached_products": 992,
+  "products_with_documents": 1010,
   "inventory_positions": 1230,
-  "verified_by": "GitHub release asset SHA-256 and byte size; Tilda catalog export comparison",
-  "verification_date": "2026-11-26"
+  "verified_by": "GitHub release asset SHA256 and byte size; original full-catalog comparison plus round8 exact product snapshot comparison",
+  "verification_date": "2026-11-27"
 }
