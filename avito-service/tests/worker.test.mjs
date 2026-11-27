@@ -42,3 +42,32 @@ test('metadata, redirect/network errors and oversized body fail closed',async()=
  const huge=async(url,opts)=>String(url).endsWith('/feed.xml')?new Response('x',{headers:{'Content-Length':'200000000'}}):fetcher(url,opts);
  assert.equal((await handle(request('/feed.xml'),huge)).status,503);
 });
+test('sanitized diagnostics identify pointer/status stages without leaking upstream inputs',async()=>{
+ const cases=[
+  [async()=>new Response(null,{status:404}),'pointer_http_404'],
+  [async()=>new Response('private-invalid-payload'),'pointer_parse_invalid'],
+  [async()=>{throw new DOMException('private-host-or-token','AbortError');},'pointer_timeout'],
+  [async()=>{throw Error('private-host-or-token');},'pointer_fetch_failed'],
+  [async url=>String(url).endsWith('/current.json')?Response.json({commit:sha}):new Response(null,{status:502}),'status_http_502']
+ ];
+ for(const [fetcher,code] of cases){
+  const response=await handle(request('/health'),fetcher);assert.equal(response.status,503);
+  const text=await response.text();assert.equal(JSON.parse(text).code,code);assert.ok(!text.includes('private-'));
+ }
+});
+test('default Cloudflare entrypoint preserves the native global fetch receiver',async()=>{
+ const worker=(await import('../pages/_worker.js')).default;
+ const original=globalThis.fetch;const {fetcher}=upstream({enabled:false});let calls=0;
+ globalThis.fetch=function(...args){if(this!==globalThis)throw new TypeError('Illegal invocation');calls++;return fetcher(...args);};
+ try {const result=await worker.fetch(request('/health'),{});assert.equal(result.status,200);assert.equal(calls,2);}
+ finally {globalThis.fetch=original;}
+});
+test('Cloudflare supported manual redirect mode rejects redirects without following them',async()=>{
+ const {fetcher}=upstream({enabled:false});let calls=0;
+ const cloudflare=async(url,init)=>{if(init.redirect==='error')throw new TypeError('Unsupported redirect mode');assert.equal(init.redirect,'manual');calls++;return fetcher(url,init);};
+ assert.equal((await handle(request('/health'),cloudflare)).status,200);assert.equal(calls,2);
+ let redirectCalls=0;
+ const redirected=async(url,init)=>{redirectCalls++;assert.equal(init.redirect,'manual');return new Response(null,{status:302,headers:{Location:'https://untrusted.test/private'}});};
+ const response=await handle(request('/health'),redirected);
+ assert.equal(response.status,503);assert.equal((await response.json()).code,'pointer_http_302');assert.equal(redirectCalls,1);
+});
