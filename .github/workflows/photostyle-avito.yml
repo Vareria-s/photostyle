@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Converter seam tests
+      - name: Converter and account seam tests
         run: python -m unittest discover -s avito-service/tests -v
       - name: HTTP relay tests
         run: node --test avito-service/tests/worker.test.mjs
@@ -37,14 +37,99 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python avito-service/tools/snapshot.py prepare --directory "$RUNNER_TEMP/avito-previous"
-      - name: Download real Tilda catalog and build fresh unpublished staging
-        run: >-
-          python avito-service/converter.py
-          --config avito-service/config.json
-          --source-url https://photostyle.ru/tstore/yml/a8b941bea8a7ee192c94ad5b5a0059eb.yml
-          --state "$RUNNER_TEMP/avito-previous/state.json"
-          --out "$RUNNER_TEMP/avito-staging"
+      - name: Download Tilda catalog once into runner temporary storage
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, pathlib, sys
+          sys.path.insert(0, 'avito-service')
+          from converter import read_source_url
+          try:
+              data = read_source_url('https://photostyle.ru/tstore/yml/a8b941bea8a7ee192c94ad5b5a0059eb.yml')
+              (pathlib.Path(os.environ['RUNNER_TEMP']) / 'avito-source.yml').write_bytes(data)
+          except Exception:
+              print('Catalog download failed; previous snapshot and profile preserved.', file=sys.stderr)
+              raise SystemExit(2)
+          PY
+      - name: Prepare account snapshot or initial preview
+        id: account
+        shell: bash
+        env:
+          AVITO_CLIENT_ID: ${{ secrets.AVITO_CLIENT_ID }}
+          AVITO_CLIENT_SECRET: ${{ secrets.AVITO_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          umask 077
+          # A partial pair is a configuration error, never permission to publish preview.
+          if { [ -n "$AVITO_CLIENT_ID" ] && [ -z "$AVITO_CLIENT_SECRET" ]; } ||
+             { [ -z "$AVITO_CLIENT_ID" ] && [ -n "$AVITO_CLIENT_SECRET" ]; }; then
+            echo 'Account connection blocked: both GitHub Secrets are required.' >> "$GITHUB_STEP_SUMMARY"
+            exit 2
+          fi
+          mkdir -p "$RUNNER_TEMP/avito-account"
+          set +e
+          python avito-service/account.py prepare \
+            --config avito-service/config.json \
+            --source-file "$RUNNER_TEMP/avito-source.yml" \
+            --previous-state "$RUNNER_TEMP/avito-previous/state.json" \
+            --out "$RUNNER_TEMP/avito-staging" \
+            --plan "$RUNNER_TEMP/avito-account/plan.json" \
+            --public-feed-url https://photostyle-avito.pages.dev/feed.xml
+          result=$?
+          set -e
+          if [ "$result" -eq 0 ]; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+            echo 'Account checks passed; provider acceptance remains pending.' >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$result" -eq 3 ] && [ -z "$AVITO_CLIENT_ID" ] && [ -z "$AVITO_CLIENT_SECRET" ]; then
+            python avito-service/converter.py \
+              --config avito-service/config.json \
+              --source-file "$RUNNER_TEMP/avito-source.yml" \
+              --state "$RUNNER_TEMP/avito-previous/state.json" \
+              --out "$RUNNER_TEMP/avito-staging"
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+            echo 'Preview only: add AVITO_CLIENT_ID and AVITO_CLIENT_SECRET in repository Actions Secrets.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Account preparation blocked; previous snapshot and profile preserved. See the safe blocker code in this step.' >> "$GITHUB_STEP_SUMMARY"
+            exit 2
+          fi
       - name: Publish complete snapshot and immutable pointer in one ref update
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python avito-service/tools/snapshot.py publish --directory "$RUNNER_TEMP/avito-previous" --stage "$RUNNER_TEMP/avito-staging"
+      - name: Check public snapshot then connect managed feed
+        if: steps.account.outputs.enabled == 'true'
+        shell: bash
+        env:
+          AVITO_CLIENT_ID: ${{ secrets.AVITO_CLIENT_ID }}
+          AVITO_CLIENT_SECRET: ${{ secrets.AVITO_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          # account commit checks the exact fresh feed digest and profile CAS.
+          # It waits only for bounded CDN convergence; it never republishes old data.
+          if ! python avito-service/account.py commit --plan "$RUNNER_TEMP/avito-account/plan.json"; then
+            echo 'Connection not confirmed; inspect the safe blocker code. The published snapshot is not republished or reset.' >> "$GITHUB_STEP_SUMMARY"
+            exit 2
+          fi
+          echo 'Managed feed connected; waiting for scheduled Avito processing, not yet accepted.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify scheduled provider result (pending is not success)
+        if: steps.account.outputs.enabled == 'true'
+        shell: bash
+        env:
+          AVITO_CLIENT_ID: ${{ secrets.AVITO_CLIENT_ID }}
+          AVITO_CLIENT_SECRET: ${{ secrets.AVITO_CLIENT_SECRET }}
+        run: |
+          if ! python avito-service/account.py verify --plan "$RUNNER_TEMP/avito-account/plan.json"; then
+            echo 'Avito acceptance is pending or blocked. This run does not certify a completed integration; see the safe blocker code.' >> "$GITHUB_STEP_SUMMARY"
+            exit 2
+          fi
+          echo 'Avito confirmed successful processing of this snapshot. Excluded source products remain excluded as reported.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove private account plan and temporary source
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, pathlib, shutil
+          root = pathlib.Path(os.environ['RUNNER_TEMP']).resolve()
+          shutil.rmtree(root / 'avito-account', ignore_errors=True)
+          (root / 'avito-source.yml').unlink(missing_ok=True)
+          PY
