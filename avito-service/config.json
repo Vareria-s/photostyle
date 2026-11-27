@@ -1,0 +1,753 @@
+{
+  "source_url": "https://photostyle.ru/tstore/yml/a8b941bea8a7ee192c94ad5b5a0059eb.yml",
+  "mode": "preview",
+  "account_scope": "photostyle-client-pending",
+  "account_kind": "client",
+  "rub_aliases": [
+    "RUB",
+    "RUR"
+  ],
+  "inventory": {
+    "status_param": "Статус",
+    "in_stock": [
+      "В наличии"
+    ],
+    "retire_statuses": [
+      "Под заказ"
+    ],
+    "count_9999": "Tilda sentinel; not confirmed physical stock",
+    "visibility": "Only offers present in enabled YML; available=false excluded if supplied"
+  },
+  "limits": {
+    "title": 50,
+    "description": 7500,
+    "images": 10
+  },
+  "guards": {
+    "minimum_ratio": 0.7
+  },
+  "variant_policy": "minimum_offer_uid_per_group_id; stable; override variant_id explicitly",
+  "seller": {
+    "Address": "Москва, улица Академика Королева, 13с1, подъезд 5",
+    "ContactPhone": "+79398526416",
+    "ManagerName": null
+  },
+  "seller_required": [
+    "Address",
+    "ContactPhone",
+    "ManagerName"
+  ],
+  "seller_provenance": {
+    "source": "https://hundred-wintry-emerald.tilda.ws/site/kontakty",
+    "verified_public": "2026-11-27",
+    "seller_confirmed": false,
+    "secondary_phone": "+79398467160",
+    "email": "info@photostylee.ru"
+  },
+  "activation": {
+    "seller_verified": false,
+    "categories_validated": false,
+    "migration_verified": false,
+    "avito_validator_passed": false,
+    "account_autoload_verified": false,
+    "text_transform_confirmed": false
+  },
+  "retirement": {
+    "confirmed": false,
+    "reasons": [
+      "missing",
+      "zero_stock",
+      "source_unavailable",
+      "inventory_unavailable"
+    ]
+  },
+  "migration_account_scope": "photostyle-client-pending",
+  "migration": {},
+  "product_overrides": {},
+  "categories": {
+    "971093522183": {
+      "source_name": "Фотоаппараты Canon",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "732394264013": {
+      "source_name": "Наушники Sennheiser",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "868460085713": {
+      "source_name": "Blackmagic Design | Digital Film Cameras",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "241358133713": {
+      "source_name": "Сумки Tenba",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "601509797523": {
+      "source_name": "Accsoon",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "949142786653": {
+      "source_name": "Аккумуляторы Canon",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "535408679963": {
+      "source_name": "BirdDog | Камеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "496510015923": {
+      "source_name": "Освещение Godox",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "486123114093": {
+      "source_name": "Roland",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "807143175823": {
+      "source_name": "Видеосендеры Accsoon",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "578839926663": {
+      "source_name": "Зарядные устройства Sony",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "689029493313": {
+      "source_name": "Освещение Smallrig",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "851420356553": {
+      "source_name": "BirdDog | Аксессуары",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "904451013683": {
+      "source_name": "Видеокамеры Blackmagic Design",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "877329179413": {
+      "source_name": "Экшен-камеры DJI",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "513417518233": {
+      "source_name": "Фотоаппараты",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "811277935113": {
+      "source_name": "Сумки Lowepro",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "968220910143": {
+      "source_name": "Конвертеры AVMATRIX",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "686440567703": {
+      "source_name": "Экшн-камеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "633050564133": {
+      "source_name": "Видеокамеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "110387897703": {
+      "source_name": "Фотоаппараты Leica",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "534488380333": {
+      "source_name": "Объективы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "357815975473": {
+      "source_name": "Переходные кольца JJC",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "241878020603": {
+      "source_name": "Рюкзаки K&F",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "905849702503": {
+      "source_name": "Аккумуляторы Olympus / OM System",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "533317494603": {
+      "source_name": "Телеконвертеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "358930193303": {
+      "source_name": "Бинокли",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "534328889523": {
+      "source_name": "Спектометры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "505055306053": {
+      "source_name": "Адаптеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "628454742803": {
+      "source_name": "Чехлы для фотоаппаратов",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "730511430523": {
+      "source_name": "Видеоголовы Benro",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "474856739393": {
+      "source_name": "Карты памяти",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "973549604963": {
+      "source_name": "Аудиорекордеры Zoom",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "189182749803": {
+      "source_name": "Картридеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "899798260343": {
+      "source_name": "Освещение",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "222909694313": {
+      "source_name": "Клетки для камер",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "728157792793": {
+      "source_name": "Защитные Фильтры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "994510980823": {
+      "source_name": "Внешние Аккумуляторы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "425618204843": {
+      "source_name": "Штативы JMARY",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "625464206113": {
+      "source_name": "Сумки/Рюкзаки",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "613262692753": {
+      "source_name": "Стойки и крепления для Света, вспышек, зонтов",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "444871663323": {
+      "source_name": "Микрофоны",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "413086076493": {
+      "source_name": "Datacolor",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "147651815713": {
+      "source_name": "Наушники",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "675082253473": {
+      "source_name": "Системы охлаждения",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "963531500913": {
+      "source_name": "Объективы Carl Zeiss",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "977900894593": {
+      "source_name": "Радиосистемы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "552513292533": {
+      "source_name": "Аудио/Видеомикшеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "476320970153": {
+      "source_name": "Видеосендеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "389313268613": {
+      "source_name": "Комплекты студийного оборудования",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "499902373293": {
+      "source_name": "Защита на экран",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "392343741543": {
+      "source_name": "Средства по уходу за камерой",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "885775606743": {
+      "source_name": "Аккумуляторы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "100097025003": {
+      "source_name": "Батарейные ручки",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "836230553213": {
+      "source_name": "Зарядные устройства",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "212663968963": {
+      "source_name": "Штативы / головы для штативов / стойки",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "654757647893": {
+      "source_name": "Фото/Видеомоноподы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "314011870413": {
+      "source_name": "Лазеры Nikon",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "658470066693": {
+      "source_name": "AVMATRIX",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "672089966663": {
+      "source_name": "Системы стабилизации",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "662894103463": {
+      "source_name": "Радиосинхронизаторы и пульты ДУ",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "951171425763": {
+      "source_name": "Дождевые и Зимние чехлы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "178305024733": {
+      "source_name": "Бленды",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "512161920123": {
+      "source_name": "Мониторы",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "811686998703": {
+      "source_name": "Blackmagic Design",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "287032291773": {
+      "source_name": "BirdDog",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "102289144633": {
+      "source_name": "ФотоПрокат",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    },
+    "134447376563": {
+      "source_name": "Квадрокоптеры",
+      "fields": {},
+      "required": [
+        "Category"
+      ],
+      "param_fields": {},
+      "validated": false,
+      "official_required_fields_pending": true
+    }
+  },
+  "text_policies": {
+    "title": "truncate_word",
+    "description": "truncate_word"
+  }
+}
