@@ -749,5 +749,12 @@
   "text_policies": {
     "title": "truncate_word",
     "description": "truncate_word"
+  },
+  "source_facts": {
+    "Condition": {
+      "value": "Новое",
+      "provenance": "user-confirmed",
+      "scope": "sale-only"
+    }
   }
 }
