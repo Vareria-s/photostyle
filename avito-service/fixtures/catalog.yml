@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<yml_catalog><shop><categories><category id="cat">Fixture camera</category></categories><offers><offer id="offer-1" group_id="product-1"><name>Fixture camera</name><description>&lt;p&gt;A camera for offline checks.&lt;/p&gt;</description><price>100.00</price><currencyId>RUR</currencyId><count>9999</count><categoryId>cat</categoryId><picture>https://example.com/camera.jpg</picture><param name="Статус">В наличии</param></offer></offers></shop></yml_catalog>
